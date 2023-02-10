@@ -14,3 +14,4 @@ jobs:
         run: |
           echo ${{ github.event.client-payload.welcome-github }}    
           echo ${{ github.event.client_payload.hello-world }}  
+          echo "welcome to my world"
