@@ -1,0 +1,16 @@
+name: run the workflow
+on:
+  repository_dispatch:
+    types: my-event
+jobs:
+  build:
+    name: run-workflow
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: print trigger details
+        run: |
+          echo ${{ github.event.client-payload.welcome-github }}    
+          echo ${{ github.event.client_payload.hello-world }}  
