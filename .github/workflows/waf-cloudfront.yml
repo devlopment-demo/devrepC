@@ -17,8 +17,7 @@ jobs:
       - name: download jar from jfrog
         id: task
         run: echo ${{ env.env }}
-      - name: checking env
-        needs: task  
+      - name: checking env 
         run: |
           if [[ release.sh ]]
           fi
