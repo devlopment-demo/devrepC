@@ -1,0 +1,24 @@
+name: waf-cloudfront
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        description: Make a choice
+        options:
+        - dev
+
+
+jobs: 
+  release-management-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: download jar from jfrog
+        id: task
+        run: echo ${{ env.env }}
+      - name: checking env
+        needs: task  
+        run: |
+          if [[ release.sh ]]
+          fi
