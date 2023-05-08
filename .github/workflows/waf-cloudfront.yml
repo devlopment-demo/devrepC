@@ -1,23 +1,51 @@
-name: waf-cloudfront
+name: Update and Deploy JAR file to Multiple Environments
+
 on:
-  workflow_dispatch:
-    inputs:
-      env:
-        type: choice
-        description: Make a choice
-        options:
-        - dev
+  push:
+    branches:
+      - main
 
-
-jobs: 
+jobs:
   release-management-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      dev: "https://my-artifactory.com/artifactory/my-repo/dev"
+      qa: "https://my-artifactory.com/artifactory/my-repo/qa"
+      stage: "https://my-artifactory.com/artifactory/my-repo/stage"
+      prod: "https://my-artifactory.com/artifactory/my-repo/prod"
     steps:
-      - name: download jar from jfrog
-        id: task
-        run: echo ${{ env.env }}
-      - name: checking env 
+      - name: Download JAR file from JFrog Artifactory
         run: |
-          if [[ release.sh ]]
-          fi
+          curl -u ${{ secrets.JFROG_USERNAME }}:${{ secrets.JFROG_API_KEY }} -O ${{ env.${{ matrix.environment }} }}
+          echo "Downloaded JAR file:"
+          ls -l *.jar
+          echo ""
+        working-directory: ${{ github.workspace }}
+
+      - name: Deploy JAR file to Environments
+        id: deploy-jar
+        run: |
+          for environment in dev qa stage prod; do
+            if [[ $environment == "dev" ]]; then
+              echo "Deploying JAR file to dev environment..."
+              ssh user@dev "sudo systemctl stop tomcat && cp *.jar /opt/tomcat/webapps && sudo systemctl start tomcat"/target path
+              echo "JAR file deployed to dev environment"
+              echo ""
+            else
+              echo "Deploying JAR file to $environment environment..."
+              ssh user@$environment "sudo systemctl stop tomcat && cp *.jar /opt/tomcat/webapps && sudo systemctl start tomcat"/target path
+              echo "JAR file deployed to $environment environment"
+              echo ""
+            fi
+          done
+        working-directory: ${{ github.workspace }}
+
+      - name: Monitor Environments for Errors
+        id: monitor-environments
+        run: |
+          for environment in dev qa stage prod; do
+            echo "Monitoring $environment environment..."
+            ssh user@$environment "tail -f /var/log/tomcat/catalina.out | grep ERROR"
+          done
+        working-directory: ${{ github.workspace }}
