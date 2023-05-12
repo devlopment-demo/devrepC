@@ -1,5 +1,5 @@
 name: bns-crypto-fargate-service
- on:
+on:
   workflow_dispatch: 
     inputs: 
       env: 
