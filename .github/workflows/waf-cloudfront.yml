@@ -37,7 +37,7 @@ jobs:
       - name: set git 
         run: | 
           git config --global user.name "naveen121" 
-          git config --global user.email "naveennr@gmail.com" 
+          git config --global user.email "naveen@gmail.com" 
       - name: git push 
         run: | 
           git commit -am "set env" 
