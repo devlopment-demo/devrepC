@@ -36,7 +36,7 @@ jobs:
               cp final-workflow.yml .github/workflows/test1.yml fi 
       - name: set git 
         run: | 
-          git config --global user.name "naveen" 
+          git config --global user.name "naveen121" 
           git config --global user.email "naveennr@gmail.com" 
       - name: git push 
         run: | 
